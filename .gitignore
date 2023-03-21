@@ -58,4 +58,5 @@ Thumbs.db
 ._*
 
 # Generated resources
-/src/main/resources/generated/*
+src/main/resources/generated/*
+src/main/resources/licenses/*

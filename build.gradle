@@ -30,29 +30,33 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 task cleanBuildroot(type: Exec) {
     if (Os.isFamily(Os.FAMILY_UNIX)) {
-        commandLine("make", "clean")
+        commandLine("make", "-C", "buildroot", "clean")
     }
 }
 clean.dependsOn cleanBuildroot
 
 task compileBuildroot(type: Exec) {
     if (Os.isFamily(Os.FAMILY_UNIX)) {
-        commandLine("make")
+        environment("BR2_EXTERNAL", System.getProperty("user.dir"))
+        commandLine("make", "-C", "buildroot", "sedna-riscv64_defconfig")
+        commandLine("make", "-C", "buildroot")
     } else {
-        logger.log(LogLevel.WARN, "Can only make buildroot on Linux. Expecting output files to have been manually placed in [output/images/].")
+        logger.log(LogLevel.WARN, "Can only make buildroot on Linux. Expecting output files to have been manually placed in [buildroot/output/images/].")
         enabled = false
     }
-    outputs.files "output/images/fw_jump.bin", "output/images/Image", "output/images/rootfs.ext2"
+    outputs.files "buildroot/output/images/fw_jump.bin", "buildroot/output/images/Image", "buildroot/output/images/rootfs.ext2"
     outputs.upToDateWhen { false }
 }
 
 task generateLegalInfo(type: Exec) {
     if (Os.isFamily(Os.FAMILY_UNIX)) {
-        commandLine("make", "legal-info")
+        environment("BR2_EXTERNAL", System.getProperty("user.dir"))
+        commandLine("make", "-C", "buildroot", "sedna-riscv64_defconfig")
+        commandLine("make", "-C", "buildroot", "legal-info")
     } else {
         enabled = false
     }
-    outputs.dirs "output/legal-info/licenses"
+    outputs.dirs "buildroot/output/legal-info/licenses"
     outputs.upToDateWhen { false }
 }
 
